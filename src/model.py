@@ -30,19 +30,18 @@ def train_outcome_model(df):
     print(classification_report(y_test, y_pred, target_names=["lose", "draw", "win"]))
 
     result_map = {
-        0: "lose",
-        1: "draw",
-        2: "win"
-    }
+    0: "lose",
+    1: "draw",
+    2: "win"
+}
 
     print("\nExample Match Predictions:")
+
     examples = X_test.copy()
     examples["actual_result"] = y_test
     examples["predicted_result"] = y_pred
 
-    
     examples["team_name"] = df.loc[X_test.index, "team_name"]
-    examples["opponent_name"] = df.loc[X_test.index, "opponent_name"]
     examples["match_date"] = df.loc[X_test.index, "match_date"]
 
     for _, row in examples.head(10).iterrows():
@@ -50,9 +49,8 @@ def train_outcome_model(df):
         actual = result_map[row["actual_result"]]
         predicted = result_map[row["predicted_result"]]
 
-        print(f"{row['match_date']} | {team} vs {opponent}")
+        print(f"{row['match_date']} | Team: {team}")
         print(f"Actual: {actual} | Predicted: {predicted}")
         print("-" * 50)
-
 
     return model

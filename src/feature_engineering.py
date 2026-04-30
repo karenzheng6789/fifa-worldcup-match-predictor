@@ -4,7 +4,7 @@ import numpy as np
 def get_team_features(team_id, before_date, df, window=10):
     """ For a given team, we look back at their past matches and calculate basic stats.
         We only use matches before the current match date."""
-    past_matches = df[df['date'] >= before_date]
+    past_matches = df[df['match_date'] >= before_date]
     past_matches = past_matches[past_matches['match_id'] < before_date]
 
     past_matches = past_matches.tail(window) # only look at last 10 matches

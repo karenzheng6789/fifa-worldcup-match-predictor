@@ -1,11 +1,33 @@
 import pandas as pd
 import numpy as np
 
+FEATURE_COLS = [
+    't_win_rate',
+    't_draw_rate',
+    't_avg_goals_for',
+    't_avg_goals_against',
+    't_avg_goal_diff',
+    't_knockout_win_rate',
+    't_matches_played',
+    'o_win_rate',
+    'o_draw_rate',
+    'o_avg_goals_for',
+    'o_avg_goals_against',
+    'o_avg_goal_diff',
+    'o_knockout_win_rate',
+    'o_matches_played',
+    'win_rate_diff',
+    'goal_diff_diff',
+    'attack_vs_defense',
+    'experience_diff',
+    'is_knockout'
+]
+
 def get_team_features(team_id, before_date, df, window=10):
     """ For a given team, we look back at their past matches and calculate basic stats.
         We only use matches before the current match date."""
-    past_matches = df[df['match_date'] >= before_date]
-    past_matches = past_matches[past_matches['match_id'] < before_date]
+    # only look at matches before the current match
+    past_matches = df[(df['team_id'] == team_id) & (df['match_date'] < before_date)]
 
     past_matches = past_matches.tail(window) # only look at last 10 matches
 
@@ -29,11 +51,11 @@ def get_team_features(team_id, before_date, df, window=10):
     avg_goal_diff = past_matches['goal_differential'].mean()
 
     # Calculate knockout win rates
-    knockout_matches = past_matches[past_matches['knockout'] == 1]
+    knockout_matches = past_matches[past_matches['knockout_stage'] == 1]
     if len(knockout_matches) == 0:
         knockout_win_rate = 0.5   # use neutral value if team has no knockout history
     else:
-        knockout_win_rate = knockout_matches['win_rate'].mean()   # return avg of knockout history
+        knockout_win_rate = knockout_matches['win'].mean()   # return avg of knockout history
 
     return {
         'win_rate': win_rate,
@@ -133,24 +155,3 @@ def build_features(ta):
 
     return df
 
-FEATURE_COLS = [
-    't_win_rate',
-    't_draw_rate',
-    't_avg_goals_for',
-    't_avg_goals_against',
-    't_avg_goal_diff',
-    't_knockout_win_rate',
-    't_matches_played',
-    'o_win_rate',
-    'o_draw_rate',
-    'o_avg_goals_for',
-    'o_avg_goals_against',
-    'o_avg_goal_diff',
-    'o_knockout_win_rate',
-    'o_matches_played',
-    'win_rate_diff',
-    'goal_diff_diff',
-    'attack_vs_defense',
-    'experience_diff',
-    'is_knockout'
-]

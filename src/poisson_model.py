@@ -22,6 +22,12 @@ def train_poisson_regression(df):
 
     # make predictions on matches the model has never seen
     predictions = model.predict(X_test)
+
+    mae = mean_absolute_error(y_test, predictions)
+    rmse = np.sqrt(mean_squared_error(y_test, predictions))
+
+    print(f"Poisson Model Results")
+    print(f"MAE:  {mae:.3f} goals")
+    print(f"RMSE: {rmse:.3f} goals")
+
     return model
-
-

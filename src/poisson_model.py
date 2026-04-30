@@ -22,5 +22,6 @@ def train_poisson_regression(df):
 
     # make predictions on matches the model has never seen
     predictions = model.predict(X_test)
+    return model
 
 

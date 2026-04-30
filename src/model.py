@@ -29,4 +29,4 @@ def train_outcome_model(df):
     print()
     print(classification_report(y_test, y_pred, target_names=["lose", "draw", "win"]))
 
-    return model 
+    return model

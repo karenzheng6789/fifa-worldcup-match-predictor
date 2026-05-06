@@ -3,7 +3,7 @@ from feature_engineering import build_features, get_team_features, FEATURE_COLS
 from model import train_outcome_model
 from poisson_model import train_poisson_regression
 import pandas as pd
-
+from pathlib import Path
 team_apps, matches, hosts = load_data()
 df = build_features(team_apps)
 outcome_model = train_outcome_model(df)
@@ -11,7 +11,10 @@ goals_model = train_poisson_regression(df)
 
 print("\n--- 2026 World Cup Predictions ---")
 
-fixtures = pd.read_csv('../data/2026_wc_matches.csv')
+BASE_DIR = Path(__file__).resolve().parent.parent
+fixtures_path = BASE_DIR/"data"/"2026_wc_matches.csv"
+fixtures = pd.read_csv(fixtures_path)
+#fixtures = pd.read_csv('../data/2026_wc_matches.csv')
 fixtures['match_date'] = pd.to_datetime(fixtures['match_date'])
 team_apps['match_date'] = pd.to_datetime(team_apps['match_date'])
 

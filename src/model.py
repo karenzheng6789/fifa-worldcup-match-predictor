@@ -35,6 +35,7 @@ def train_outcome_model(df):
     2: "win"
 }
 
+
     print("\nExample Match Predictions:")
 
     examples = X_test.copy()

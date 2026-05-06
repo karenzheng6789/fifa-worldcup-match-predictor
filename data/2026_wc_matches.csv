@@ -1,0 +1,66 @@
+match_id,team_id,team_name,opponent_id,opponent_name,match_date,knockout_stage
+M-2026-01,T-46,Mexico,T-70,South Africa,2026-06-11,0
+M-2026-02,T-71,Korea Republic,T-20,Czechia,2026-06-11,0
+M-2026-03,T-20,Czechia,T-70,South Africa,2026-06-18,0
+M-2026-04,T-46,Mexico,T-71,Korea Republic,2026-06-18,0
+M-2026-05,T-70,South Africa,T-71,Korea Republic,2026-06-24,0
+M-2026-06,T-20,Czechia,T-46,Mexico,2026-06-24,0
+M-2026-07,T-12,Canada,T-08,Bosnia and Herzegovina,2026-06-12,0
+M-2026-08,T-59,Qatar,T-75,Switzerland,2026-06-13,0
+M-2026-09,T-12,Canada,T-59,Qatar,2026-06-18,0
+M-2026-10,T-75,Switzerland,T-08,Bosnia and Herzegovina,2026-06-18,0
+M-2026-11,T-08,Bosnia and Herzegovina,T-59,Qatar,2026-06-24,0
+M-2026-12,T-75,Switzerland,T-12,Canada,2026-06-24,0
+M-2026-13,T-09,Brazil,T-47,Morocco,2026-06-13,0
+M-2026-14,T-64,Scotland,T-34,Haiti,2026-06-13,0
+M-2026-15,T-09,Brazil,T-64,Scotland,2026-06-19,0
+M-2026-16,T-47,Morocco,T-34,Haiti,2026-06-20,0
+M-2026-17,T-34,Haiti,T-09,Brazil,2026-06-25,0
+M-2026-18,T-47,Morocco,T-64,Scotland,2026-06-25,0
+M-2026-19,T-83,United States,T-55,Paraguay,2026-06-12,0
+M-2026-20,T-04,Australia,T-80,Turkey,2026-06-13,0
+M-2026-21,T-83,United States,T-04,Australia,2026-06-19,0
+M-2026-22,T-55,Paraguay,T-80,Turkey,2026-06-19,0
+M-2026-23,T-80,Turkey,T-83,United States,2026-06-25,0
+M-2026-24,T-55,Paraguay,T-04,Australia,2026-06-25,0
+M-2026-25,T-73,Spain,T-65,Senegal,2026-06-15,0
+M-2026-26,T-63,Saudi Arabia,T-01,Algeria,2026-06-15,0
+M-2026-27,T-73,Spain,T-63,Saudi Arabia,2026-06-21,0
+M-2026-28,T-65,Senegal,T-01,Algeria,2026-06-21,0
+M-2026-29,T-01,Algeria,T-73,Spain,2026-06-27,0
+M-2026-30,T-63,Saudi Arabia,T-65,Senegal,2026-06-27,0
+M-2026-31,T-48,Netherlands,T-44,Japan,2026-06-14,0
+M-2026-32,T-74,Sweden,T-79,Tunisia,2026-06-14,0
+M-2026-33,T-48,Netherlands,T-74,Sweden,2026-06-20,0
+M-2026-34,T-44,Japan,T-79,Tunisia,2026-06-21,0
+M-2026-35,T-79,Tunisia,T-48,Netherlands,2026-06-26,0
+M-2026-36,T-44,Japan,T-74,Sweden,2026-06-26,0
+M-2026-37,T-06,Belgium,T-26,Egypt,2026-06-14,0
+M-2026-38,T-16,Colombia,T-65,Senegal,2026-06-15,0
+M-2026-39,T-06,Belgium,T-16,Colombia,2026-06-21,0
+M-2026-40,T-26,Egypt,T-65,Senegal,2026-06-21,0
+M-2026-41,T-65,Senegal,T-06,Belgium,2026-06-27,0
+M-2026-42,T-26,Egypt,T-16,Colombia,2026-06-27,0
+M-2026-43,T-03,Argentina,T-01,Algeria,2026-06-15,0
+M-2026-44,T-49,New Zealand,T-39,Iraq,2026-06-15,0
+M-2026-45,T-03,Argentina,T-49,New Zealand,2026-06-21,0
+M-2026-46,T-01,Algeria,T-39,Iraq,2026-06-22,0
+M-2026-47,T-39,Iraq,T-03,Argentina,2026-06-27,0
+M-2026-48,T-01,Algeria,T-49,New Zealand,2026-06-27,0
+M-2026-49,T-58,Portugal,T-32,Ghana,2026-06-16,0
+M-2026-50,T-54,Panama,T-32,Ghana,2026-06-16,0
+M-2026-51,T-58,Portugal,T-54,Panama,2026-06-22,0
+M-2026-52,T-32,Ghana,T-54,Panama,2026-06-22,0
+M-2026-53,T-54,Panama,T-58,Portugal,2026-06-28,0
+M-2026-54,T-32,Ghana,T-58,Portugal,2026-06-28,0
+M-2026-55,T-30,France,T-18,Croatia,2026-06-16,0
+M-2026-56,T-28,England,T-42,Ivory Coast,2026-06-16,0
+M-2026-57,T-30,France,T-28,England,2026-06-22,0
+M-2026-58,T-18,Croatia,T-42,Ivory Coast,2026-06-23,0
+M-2026-59,T-42,Ivory Coast,T-30,France,2026-06-28,0
+M-2026-60,T-18,Croatia,T-28,England,2026-06-28,0
+M-2026-61,T-31,Germany,T-25,Ecuador,2026-06-14,0
+M-2026-62,T-42,Ivory Coast,T-25,Ecuador,2026-06-14,0
+M-2026-63,T-31,Germany,T-42,Ivory Coast,2026-06-20,0
+M-2026-64,T-25,Ecuador,T-31,Germany,2026-06-25,0
+M-2026-65,T-84,Uruguay,T-38,Iran,2026-06-17,0

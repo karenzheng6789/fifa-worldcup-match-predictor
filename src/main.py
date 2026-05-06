@@ -150,4 +150,4 @@ t2_id, t2_name = sf_winners[1]
 winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
 print(f"  {t1_name} vs {t2_name} → {winner_name}")
 
-print(f"\n🏆 PREDICTED 2026 WORLD CUP WINNER: {winner_name} 🏆")
+print(f"\n PREDICTED 2026 WORLD CUP WINNER: {winner_name} ")

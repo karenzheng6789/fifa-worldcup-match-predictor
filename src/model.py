@@ -15,7 +15,7 @@ def train_outcome_model(df):
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y)
 
     #Create a Random Forest Classifier
-    model = RandomForestClassifier(n_estimators=200, random_state=42, class_weight="balanced")
+    model = RandomForestClassifier(n_estimators=500, max_depth=8, min_samples_leaf=5, random_state=42, class_weight="balanced_subsample")
 
     #Train_model
     model.fit(X_train, y_train)

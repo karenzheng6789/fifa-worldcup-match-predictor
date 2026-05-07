@@ -4,9 +4,14 @@ from model import train_outcome_model
 from poisson_model import train_poisson_regression
 import pandas as pd
 from pathlib import Path
+from model2 import train_xgboost_outcome_model
+
 team_apps, matches, hosts = load_data()
 df = build_features(team_apps)
 outcome_model = train_outcome_model(df)
+
+xgb_model = train_xgboost_outcome_model(df)
+
 goals_model = train_poisson_regression(df)
 
 print("\n--- 2026 World Cup Predictions ---")
@@ -47,7 +52,8 @@ for _, row in fixtures.iterrows():
     }
 
     X = pd.DataFrame([match_row])[FEATURE_COLS]
-    prediction = result_map[outcome_model.predict(X)[0]]
+    #prediction = result_map[outcome_model.predict(X)[0]]
+    prediction = result_map[xgb_model.predict(X)[0]]
     goals = goals_model.predict(X)[0]
 
     print(f"{row['match_id']} | {row['team_name']} vs {row['opponent_name']}")
@@ -60,6 +66,41 @@ for _, row in fixtures.iterrows():
     print("-" * 50)
 
 # ---- TOURNAMENT SIMULATION ----
+
+# def predict_winner(team1_id, team2_id, team1_name, team2_name, match_date, ta, outcome_model, goals_model):
+#     team_feats = get_team_features(team1_id, match_date, ta)
+#     opp_feats = get_team_features(team2_id, match_date, ta)
+
+#     match_row = {
+#         't_win_rate': team_feats['win_rate'],
+#         't_draw_rate': team_feats['draw_rate'],
+#         't_avg_goals_for': team_feats['avg_goals_for'],
+#         't_avg_goals_against': team_feats['avg_goals_against'],
+#         't_avg_goal_diff': team_feats['avg_goal_diff'],
+#         't_knockout_win_rate': team_feats['knockout_win_rate'],
+#         't_matches_played': team_feats['matches_played'],
+#         'o_win_rate': opp_feats['win_rate'],
+#         'o_draw_rate': opp_feats['draw_rate'],
+#         'o_avg_goals_for': opp_feats['avg_goals_for'],
+#         'o_avg_goals_against': opp_feats['avg_goals_against'],
+#         'o_avg_goal_diff': opp_feats['avg_goal_diff'],
+#         'o_knockout_win_rate': opp_feats['knockout_win_rate'],
+#         'o_matches_played': opp_feats['matches_played'],
+#         'win_rate_diff': team_feats['win_rate'] - opp_feats['win_rate'],
+#         'goal_diff_diff': team_feats['avg_goal_diff'] - opp_feats['avg_goal_diff'],
+#         'attack_vs_defense': team_feats['avg_goals_for'] - opp_feats['avg_goals_against'],
+#         'experience_diff': team_feats['matches_played'] - opp_feats['matches_played'],
+#         'is_knockout': 1,
+#     }
+
+#     X = pd.DataFrame([match_row])[FEATURE_COLS]
+#     prediction = outcome_model.predict(X)[0]
+
+#     # in knockout rounds draws go to team1 winning (simplification)
+#     if prediction == 2 or prediction == 1:
+#         return team1_id, team1_name
+#     else:
+#         return team2_id, team2_name
 
 def predict_winner(team1_id, team2_id, team1_name, team2_name, match_date, ta, outcome_model, goals_model):
     team_feats = get_team_features(team1_id, match_date, ta)
@@ -88,10 +129,32 @@ def predict_winner(team1_id, team2_id, team1_name, team2_name, match_date, ta, o
     }
 
     X = pd.DataFrame([match_row])[FEATURE_COLS]
-    prediction = outcome_model.predict(X)[0]
+    #prediction = outcome_model.predict(X)[0]
+    prediction = xgb_model.predict(X)[0]
 
-    # in knockout rounds draws go to team1 winning (simplification)
-    if prediction == 2 or prediction == 1:
+
+    # If model predicts team1 win
+    if prediction == 2:
+        return team1_id, team1_name
+
+    # If model predicts team1 lose
+    if prediction == 0:
+        return team2_id, team2_name
+
+    # If draw, use strength score as tie-breaker
+    team1_score = (
+        team_feats['win_rate']
+        + team_feats['avg_goal_diff']
+        + team_feats['knockout_win_rate']
+    )
+
+    team2_score = (
+        opp_feats['win_rate']
+        + opp_feats['avg_goal_diff']
+        + opp_feats['knockout_win_rate']
+    )
+
+    if team1_score >= team2_score:
         return team1_id, team1_name
     else:
         return team2_id, team2_name
@@ -119,7 +182,9 @@ r16_winners = []
 for i in range(0, len(bracket), 2):
     t1_id, t1_name = bracket[i]
     t2_id, t2_name = bracket[i+1]
-    winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+    #winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+    winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, xgb_model, goals_model)
+
     r16_winners.append((winner_id, winner_name))
     print(f"  {t1_name} vs {t2_name} → {winner_name}")
 
@@ -129,7 +194,10 @@ qf_winners = []
 for i in range(0, len(r16_winners), 2):
     t1_id, t1_name = r16_winners[i]
     t2_id, t2_name = r16_winners[i+1]
-    winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+    
+    #winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+    winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, xgb_model, goals_model)
+
     qf_winners.append((winner_id, winner_name))
     print(f"  {t1_name} vs {t2_name} → {winner_name}")
 
@@ -139,7 +207,9 @@ sf_winners = []
 for i in range(0, len(qf_winners), 2):
     t1_id, t1_name = qf_winners[i]
     t2_id, t2_name = qf_winners[i+1]
-    winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+    #winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+    winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, xgb_model, goals_model)
+
     sf_winners.append((winner_id, winner_name))
     print(f"  {t1_name} vs {t2_name} → {winner_name}")
 
@@ -147,7 +217,9 @@ for i in range(0, len(qf_winners), 2):
 print("\nFinal:")
 t1_id, t1_name = sf_winners[0]
 t2_id, t2_name = sf_winners[1]
-winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+#winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, outcome_model, goals_model)
+winner_id, winner_name = predict_winner(t1_id, t2_id, t1_name, t2_name, knockout_date, team_apps, xgb_model, goals_model)
+
 print(f"  {t1_name} vs {t2_name} → {winner_name}")
 
 print(f"\n PREDICTED 2026 WORLD CUP WINNER: {winner_name} ")

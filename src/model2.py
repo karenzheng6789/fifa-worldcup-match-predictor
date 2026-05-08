@@ -22,13 +22,13 @@ def train_xgboost_outcome_model(df):
 
     model = XGBClassifier(
         n_estimators=500,
-        max_depth=4,
+        max_depth=4, #prevent overfitting
         learning_rate=0.03,
         subsample=0.8,
-        colsample_bytree=0.8,
-        objective="multi:softprob",
-        num_class=3,
-        eval_metric="mlogloss",
+        colsample_bytree=0.8, #each tree just use 80% of the features. 
+        objective="multi:softprob", #model calculate the prob for each class
+        num_class=3, #draw, win, loss
+        eval_metric="mlogloss", #penalty if predict wrong
         random_state=42
     )
 

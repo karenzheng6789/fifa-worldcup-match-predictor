@@ -72,7 +72,7 @@ def print_fixture_predictions(model, model_name):
         prediction = result_map[model.predict(X)[0]]
         team_goals = goals_model.predict(X)[0]
 
-        # Flip features to get opponent's goals
+        # Flip features to get opponent's goals (model only uses team_id)
         flipped_row = {
             'team_id': row['opponent_id'],
             'opponent_id': row['team_id'],

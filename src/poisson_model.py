@@ -11,8 +11,8 @@ def train_poisson_regression(df):
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y,
-        test_size=0.2,
-        random_state=42
+        test_size=0.2, # 80% train, 20%
+        random_state=42  # gets exact split everytime instead of random split shuffle
     )
 
     # train model
@@ -23,8 +23,8 @@ def train_poisson_regression(df):
     # make predictions on matches the model has never seen
     predictions = model.predict(X_test)
 
-    mae = mean_absolute_error(y_test, predictions)
-    rmse = np.sqrt(mean_squared_error(y_test, predictions))
+    mae = mean_absolute_error(y_test, predictions) # calculates avg error
+    rmse = np.sqrt(mean_squared_error(y_test, predictions)) # larger mistakes get penalized more than small
 
     print(f"Poisson Model Results")
     print(f"MAE:  {mae:.3f} goals")

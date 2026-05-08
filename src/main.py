@@ -67,19 +67,34 @@ def print_fixture_predictions(model, model_name):
     print(f"\n--- 2026 World Cup Predictions Using {model_name} ---")
 
     for _, row in fixtures.iterrows():
+        # Build features from team's perspective
         X = build_match_row(row, team_apps)
-
         prediction = result_map[model.predict(X)[0]]
-        goals = goals_model.predict(X)[0]
+        team_goals = goals_model.predict(X)[0]
+
+        # Flip features to get opponent's goals
+        flipped_row = {
+            'team_id': row['opponent_id'],
+            'opponent_id': row['team_id'],
+            'team_name': row['opponent_name'],
+            'opponent_name': row['team_name'],
+            'match_date': row['match_date'],
+            'knockout_stage': row['knockout_stage'],
+        }
+        X_opp = build_match_row(pd.Series(flipped_row), team_apps)
+        opp_goals = goals_model.predict(X_opp)[0]
 
         print(f"{row['match_id']} | {row['team_name']} vs {row['opponent_name']}")
 
         if prediction == "win":
-            print(f"Predicted Winner: {row['team_name']} | Est. Goals for {row['team_name']}: {goals:.1f}")
+            print(f"Predicted Winner: {row['team_name']}")
+            print(f"Est. Score: {row['team_name']} {team_goals:.1f} - {opp_goals:.1f} {row['opponent_name']}")
         elif prediction == "lose":
-            print(f"Predicted Winner: {row['opponent_name']} | Est. Goals for {row['team_name']}: {goals:.1f}")
+            print(f"Predicted Winner: {row['opponent_name']}")
+            print(f"Est. Score: {row['team_name']} {team_goals:.1f} - {opp_goals:.1f} {row['opponent_name']}")
         else:
-            print(f"Predicted: Draw | Est. Goals for {row['team_name']}: {goals:.1f}")
+            print(f"Predicted: Draw")
+            print(f"Est. Score: {row['team_name']} {team_goals:.1f} - {opp_goals:.1f} {row['opponent_name']}")
 
         print("-" * 50)
 

@@ -5,6 +5,7 @@ from model2 import train_xgboost_outcome_model
 from poisson_model import train_poisson_regression
 import pandas as pd
 from pathlib import Path
+from linear_model import train_linear_regression
 
 
 team_apps, matches, hosts = load_data()
@@ -20,6 +21,9 @@ xgb_model = train_xgboost_outcome_model(df)
 
 print("\n================ POISSON GOALS MODEL ================")
 goals_model = train_poisson_regression(df)
+
+print("\n================ LINEAR REGRESSION GOALS MODEL ================")
+linear_model, linear_preds = train_linear_regression(df)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -240,6 +244,75 @@ def run_tournament_simulation(model, model_name):
     print(f"  {t1_name} vs {t2_name} → {winner_name}")
     print(f"\nPREDICTED 2026 WORLD CUP WINNER USING {model_name}: {winner_name}")
 
+def run_tournament_goals(model_name):
+    print(f"\n--- 2026 TOURNAMENT GOAL PREDICTIONS ---")
+    print(f"{'Match':<12} {'Team':<25} {'Poisson Goals':>15} {'Linear Goals':>15}")
+    print("-" * 70)
+
+    for _, row in fixtures.iterrows():
+        # get team goals
+        X = build_match_row(row, team_apps)
+        poisson_goals = goals_model.predict(X)[0]
+        linear_goals = max(0, linear_model.predict(X)[0])
+
+        # flip to get opponent goals
+        flipped_row = {
+            'team_id': row['opponent_id'],
+            'opponent_id': row['team_id'],
+            'team_name': row['opponent_name'],
+            'opponent_name': row['team_name'],
+            'match_date': row['match_date'],
+            'knockout_stage': row['knockout_stage'],
+        }
+        X_opp = build_match_row(pd.Series(flipped_row), team_apps)
+        poisson_goals_opp = goals_model.predict(X_opp)[0]
+        linear_goals_opp = max(0, linear_model.predict(X_opp)[0])
+
+        print(f"{row['match_id']:<12} {row['team_name']:<25} {poisson_goals:>15.1f} {linear_goals:>15.1f}")
+        print(f"{'':12} {row['opponent_name']:<25} {poisson_goals_opp:>15.1f} {linear_goals_opp:>15.1f}")
+        print("-" * 70)
+
+    # total goals per team across all group stage matches
+    print(f"\n--- TOTAL PREDICTED GROUP STAGE GOALS PER TEAM ---")
+    print(f"{'Team':<25} {'Poisson Total':>15} {'Linear Total':>15}")
+    print("-" * 55)
+
+    team_goals_poisson = {}
+    team_goals_linear = {}
+
+    for _, row in fixtures.iterrows():
+        X = build_match_row(row, team_apps)
+        p = goals_model.predict(X)[0]
+        l = max(0, linear_model.predict(X)[0])
+
+        flipped_row = {
+            'team_id': row['opponent_id'],
+            'opponent_id': row['team_id'],
+            'team_name': row['opponent_name'],
+            'opponent_name': row['team_name'],
+            'match_date': row['match_date'],
+            'knockout_stage': row['knockout_stage'],
+        }
+        X_opp = build_match_row(pd.Series(flipped_row), team_apps)
+        p_opp = goals_model.predict(X_opp)[0]
+        l_opp = max(0, linear_model.predict(X_opp)[0])
+
+        team = row['team_name']
+        opp = row['opponent_name']
+
+        team_goals_poisson[team] = team_goals_poisson.get(team, 0) + p
+        team_goals_poisson[opp] = team_goals_poisson.get(opp, 0) + p_opp
+        team_goals_linear[team] = team_goals_linear.get(team, 0) + l
+        team_goals_linear[opp] = team_goals_linear.get(opp, 0) + l_opp
+
+    # sort highest to lowest
+    sorted_teams = sorted(team_goals_poisson.items(), key=lambda x: x[1], reverse=True)
+
+    for team, poisson_total in sorted_teams:
+        linear_total = team_goals_linear[team]
+        print(f"{team:<25} {poisson_total:>15.1f} {linear_total:>15.1f}")
+
 
 run_tournament_simulation(outcome_model, "Random Forest")
 run_tournament_simulation(xgb_model, "XGBoost")
+run_tournament_goals("Both Models")
